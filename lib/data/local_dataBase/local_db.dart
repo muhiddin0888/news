@@ -15,7 +15,7 @@ class LocalDatabase {
     if (_database != null) {
       return _database!;
     } else {
-      _database = await _initDB("todos.db");
+      _database = await _initDB("news.db");
       return _database!;
     }
   }
@@ -33,7 +33,7 @@ class LocalDatabase {
 
     await db.execute('''
     CREATE TABLE $newsTable (
-    ${NewsModel.id} $textType,
+    ${NewsModel.id} $idType,
     ${NewsModel.createdAt} $textType,
     ${NewsModel.newsImage} $textType,
     ${NewsModel.newsText} $textType,
