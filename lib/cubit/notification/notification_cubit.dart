@@ -6,7 +6,9 @@ import 'notification_state.dart';
 class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit({
     required this.notificationRepository,
-  }) : super(NotificationInitial());
+  }) : super(NotificationInitial()) {
+    readSavedNews();
+  }
 
   final NotificationRepository notificationRepository;
 
@@ -25,5 +27,3 @@ class NotificationCubit extends Cubit<NotificationState> {
     readSavedNews();
   }
 }
-
-
