@@ -32,14 +32,14 @@ class App extends StatelessWidget {
         create: (context) => NotificationCubit(
           notificationRepository: context.read<NotificationRepository>(),
         ),
-        child: Main(),
+        child: const Main(),
       ),
     );
   }
 }
 
 class Main extends StatefulWidget {
-  Main({super.key});
+  const Main({super.key});
 
   @override
   State<Main> createState() => _MainState();
@@ -108,7 +108,7 @@ class _MainState extends State<Main> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: HomePage(),
     );
   }
