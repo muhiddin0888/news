@@ -14,6 +14,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = AppBlocObserver();
   await Firebase.initializeApp();
+  await FirebaseMessaging.instance.subscribeToTopic("news");
 
   runApp(
     const App(),
@@ -38,12 +39,22 @@ class App extends StatelessWidget {
 }
 
 class Main extends StatefulWidget {
-  Main({super.key}) {
-    init();
-  }
+  Main({super.key});
 
   @override
   State<Main> createState() => _MainState();
+}
+
+class _MainState extends State<Main> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    LocalNotificationService.localNotificationService.init(navigatorKey);
+    init();
+    super.initState();
+  }
+
   void init() async {
     String? FCMToken = await FirebaseMessaging.instance.getToken();
 
@@ -55,6 +66,12 @@ class Main extends StatefulWidget {
     FirebaseMessaging.onMessage.listen((RemoteMessage remoteMessage) {
       print("FOREGROUND:${remoteMessage.notification?.title}");
       saveNotificationAndShowLocal(remoteMessage);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage remoteMessage) {
+      saveNotification(remoteMessage);
+      Navigator.pushNamed(context, remoteMessage.data["route_name"]);
+      print("ON MESSAGE OPENED APP:${remoteMessage.notification!.title}");
     });
 
     FirebaseMessaging.instance.getInitialMessage().then((message) {
@@ -75,7 +92,7 @@ class Main extends StatefulWidget {
       newsTitle: data["news_title"],
       newsText: data["news_text"],
     );
-    // BlocProvider.of<NotificationCubit>(context).insertNotification(cachedNews);
+    BlocProvider.of<NotificationCubit>(context).insertNotification(cachedNews);
   }
 
   void saveNotification(RemoteMessage remoteMessage) {
@@ -86,14 +103,11 @@ class Main extends StatefulWidget {
       newsTitle: data["news_title"],
       newsText: data["news_text"],
     );
-    // BlocProvider.of<NotificationCubit>(context).insertNotification(cachedNews);
+    BlocProvider.of<NotificationCubit>(context).insertNotification(cachedNews);
   }
-}
 
-class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<NotificationCubit>(context).readSavedNews();
     return MaterialApp(
       home: HomePage(),
     );
