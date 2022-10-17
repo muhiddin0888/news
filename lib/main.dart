@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news/screens/bloc_observer.dart';
@@ -21,22 +22,25 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider(
-          create: (_) => NotificationRepository(),
+    return RepositoryProvider(
+      create: (_) => NotificationRepository(),
+      child: BlocProvider(
+        create: (context) => NotificationCubit(
+          notificationRepository: context.read<NotificationRepository>(),
         ),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => NotificationCubit(
-              notificationRepository: context.read<NotificationRepository>(),
-            ),
-          ),
-        ],
-        child: HomePage(),
+        child: Main(),
       ),
+    );
+  }
+}
+
+class Main extends StatelessWidget {
+  const Main({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomePage(),
     );
   }
 }
